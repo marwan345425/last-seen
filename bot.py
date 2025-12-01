@@ -5,9 +5,9 @@ from datetime import datetime, timedelta
 import pytz
 
 # ------- بيانات حسابك -------
-api_id = 21702685
-api_hash = "7f0c031fceb5636436dcf5bad3e44b1c"
-string_session = "1BJWap1sBu0mQEoKN2Wc6_8Xzrryd2eZsXUvvX8WId9mCqlNz0hnvM8-P07UjIUh8nS9aPr_oF2Y2U_xiuz8g9VqLeZlKyL_NLaO4u7HYuCwqfODiDHf-_m04XdYruJSiNCzOfB2y4xNCUGTGZHqcrZtOG6w7x2H9jlXSJUAgiEPJbxx10U1vXOWNE8CDvEDVMd1eqP2AcdosArUDHiX55QSdhzRXtmLOfZIatDvABhFqICEJ1W0v7m3M_uEY0GmkJfL9tmMYn83sj4R7wrYNCCvn0sKBfSpuTdyC9yjmpXgMgSzZ7WgFw_oSFnoc8un18hXzupUGfGI-uYA158rm-DG8zqh3-xM="
+api_id = 22575615
+api_hash = "c77e3b35d6b1b2b35b35020d69077d8d"
+string_session = "1BJWap1wBu0CfmMUBcv72WTVUxj6Jsss6HkTa0__H9QKMba8_koRYey8g8_uuvw4tDyRKyhR2IG__TioSbXQYr1J8KJ0xUJmBdhf2Eel8-zrsYIUtK2j4aTEiDgpduNxbtVNws5qKwpGonE-LpgawNhNZzFTwUeEVBSG1lrTFDHwFsiHWoiUFqOsGpw4098uMEl2_GzfxD3_sEGPnHQzHsg0uWj2KtxgzRkuEg8a8vEBGTAZnNUJQ2hTjfBCoLTLxKzjLiOUSa5b9zGsn_VFmgG0to6ww2hJfwbhfZ9l3aBVHJWgZmCQXvKDzboeYIPcOhM7HDT3Vx8efvFuVj8b3zWbe6_HPyNs="
 notify_user = "@Leeo71"      # اليوزر اللي يستقبل التنبيهات
 target_user = "Kh770l" # الشخص اللي تبي تراقبه (اكتب اليوزر بدون @)
 
