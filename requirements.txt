@@ -1,0 +1,15 @@
+telethon
+flask
+aiohttp
+pytz
+scikit-learn
+nltk
+textblob
+transformers
+pandas
+matplotlib
+seaborn
+torch
+tqdm
+emoji
+regex
