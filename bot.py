@@ -1,0 +1,108 @@
+import asyncio
+from telethon import TelegramClient, events
+from telethon.sessions import StringSession
+from datetime import datetime, timedelta
+import pytz
+
+# ------- بيانات حسابك -------
+api_id = 21702685
+api_hash = "7f0c031fceb5636436dcf5bad3e44b1c"
+string_session = "1BJWap1sBu0mQEoKN2Wc6_8Xzrryd2eZsXUvvX8WId9mCqlNz0hnvM8-P07UjIUh8nS9aPr_oF2Y2U_xiuz8g9VqLeZlKyL_NLaO4u7HYuCwqfODiDHf-_m04XdYruJSiNCzOfB2y4xNCUGTGZHqcrZtOG6w7x2H9jlXSJUAgiEPJbxx10U1vXOWNE8CDvEDVMd1eqP2AcdosArUDHiX55QSdhzRXtmLOfZIatDvABhFqICEJ1W0v7m3M_uEY0GmkJfL9tmMYn83sj4R7wrYNCCvn0sKBfSpuTdyC9yjmpXgMgSzZ7WgFw_oSFnoc8un18hXzupUGfGI-uYA158rm-DG8zqh3-xM="
+notify_user = "@Leeo71"      # اليوزر اللي يستقبل التنبيهات
+target_user = "Kh770l" # الشخص اللي تبي تراقبه (اكتب اليوزر بدون @)
+
+# ------- الإعدادات -------
+check_interval = 30   # كل 30 ثانية مراقبة
+health_interval = 3600  # كل ساعة تقرير تشغيل
+
+# ------- التوقيت -------
+ksa = pytz.timezone("Asia/Riyadh")
+
+client = TelegramClient(StringSession(string_session), api_id, api_hash)
+
+last_online_status = None
+last_message_ids = {}   # لمنع التكرار في رسائل القروبات
+last_private_id = None  # آخر رسالة خاصة
+
+async def send_health_message():
+    now = datetime.now(ksa).strftime("%Y-%m-%d %I:%M:%S %p")
+    msg = f"👾 البوت شغال - {now} (توقيت المدينة المنورة)"
+    try:
+        await client.send_message(notify_user, msg)
+    except:
+        pass
+
+async def monitor_user():
+    global last_online_status, last_message_ids, last_private_id
+
+    await client.start()
+    target = await client.get_entity(target_user)
+
+    print("Bot started successfully.")
+
+    last_health_time = datetime.now()
+
+    while True:
+        now = datetime.now()
+
+        # -------- تقرير كل ساعة --------
+        if now - last_health_time >= timedelta(seconds=health_interval):
+            await send_health_message()
+            last_health_time = now
+
+        # -------- مراقبة آخر ظهور --------
+        try:
+            status = target.status
+            readable_status = None
+
+            if hasattr(status, "was_online"):
+                readable_status = "offline"
+            elif "Online" in str(status):
+                readable_status = "online"
+            else:
+                readable_status = "hidden"
+
+            if readable_status != last_online_status:
+                last_online_status = readable_status
+                await client.send_message(
+                    notify_user, 
+                    f"👤 {target.first_name} صار الآن: {readable_status}"
+                )
+        except:
+            pass
+
+        # -------- مراقبة رسائل الخاص --------
+        try:
+            async for msg in client.iter_messages(target, limit=1):
+                if msg.id != last_private_id:
+                    last_private_id = msg.id
+                    await client.send_message(
+                        notify_user,
+                        f"📩 رسالة جديدة من {target.first_name} في الخاص:\n\n{msg.text}"
+                    )
+        except:
+            pass
+
+        # -------- مراقبة رسائل القروبات --------
+        dialogs = await client.get_dialogs()
+        for dialog in dialogs:
+            entity = dialog.entity
+            try:
+                async for msg in client.iter_messages(entity, limit=3):
+                    if msg.sender_id == target.id:
+                        if last_message_ids.get(entity.id) != msg.id:
+                            last_message_ids[entity.id] = msg.id
+                            await client.send_message(
+                                notify_user,
+                                f"💬 {target.first_name} كتب في قروب ({entity.title}):\n\n{msg.text}"
+                            )
+            except:
+                continue
+
+        await asyncio.sleep(check_interval)
+
+async def main():
+    await monitor_user()
+
+if __name__ == "__main__":
+    asyncio.run(main())
